@@ -27,6 +27,7 @@
     "jest-enzyme": "^4.0.1",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
+    "react-test-renderer": "^16.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
@@ -36,6 +37,13 @@
       "react",
       "enzyme",
       "jest-enzyme"
-    ]
+    ],
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
+  },
+  "dependencies": {
+    "prop-types": "^15.6.0",
+    "underscore": "^1.8.3"
   }
 }
