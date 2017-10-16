@@ -25,7 +25,28 @@ service.addMessage = function(msg) {
 };
 
 //GET
-service.getMessages = function() {
+service.getMessages = function({limit= 99999, userMessagesOnly= false, minSentiment= -1, maxSentiment= 1}={}) {
+
+  if (minSentiment >= maxSentiment) {
+    throw `minSentiment, ${minSentiment}, greater or equal to maxSentiment, ${maxSentiment}.`;
+  }
+
+  if ( minSentiment > 1 || minSentiment < -1 ) {
+    throw `minSentiment not in (-1,1) range: ${minSentiment}`
+  }
+
+  if ( maxSentiment > 1 || maxSentiment < -1 ) {
+    throw `maxSentiment not in (-1,1) range: ${maxSentiment}`
+  }
+
+  if (limit < 1) {
+    throw `limit set below 1.`
+  }
+
+  if (typeof(userMessagesOnly) !== 'boolean') {
+    throw `userMessagesOnly not boolean.`
+  }
+
   return Promise.resolve(db);
 };
 
