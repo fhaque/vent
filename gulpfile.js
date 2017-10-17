@@ -21,7 +21,8 @@ gulp.task('styles', () => {
 
 // Scripts task
 gulp.task('js', () => {
-    browserify('dev/scripts/app.js', {debug: true})
+    console.log('Doing JS task');
+    browserify('./dev/scripts/app.js', {debug: true})
         .transform('babelify', {
             sourceMaps: true,
             presets: ['es2015','react']
@@ -73,9 +74,9 @@ gulp.task('bs', () => {
 });
 
 gulp.task('watch', function() {
-    gulp.watch('dev/**/*.js',['js']);
-    gulp.watch('dev/**/*.scss',['styles']);
-    gulp.watch('dev/assets/**/*', ['assets-compressed']);
+    gulp.watch('./dev/scripts/**/*.js',['js']);
+    gulp.watch('./dev/**/*.scss',['styles']);
+    gulp.watch('./dev/assets/**/*', ['assets-compressed']);
     /* uncomment if you want uncompressed */
     // gulp.watch('dev/assets/**/*', ['assets-uncompressed']);
     gulp.watch('*.html', reload);
@@ -83,4 +84,4 @@ gulp.task('watch', function() {
 });
 
 //Using compressed assets by default.
-gulp.task('default', ['js','bs', 'styles','assets-compressed']);
+gulp.task('default', ['js','bs', 'styles','assets-compressed','watch']);

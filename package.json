@@ -44,6 +44,9 @@
     }
   },
   "dependencies": {
-    "underscore": "^1.8.3"
+    "googleapis": "^22.2.0",
+    "jquery": "^3.2.1",
+    "underscore": "^1.8.3",
+    "whatwg-fetch": "^2.0.3"
   }
 }

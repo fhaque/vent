@@ -33,16 +33,17 @@ class MessageForm extends React.Component {
 
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} >
           <input type="text" name="msg" value={msg} onChange={this.handleChange}/>
+          <input type="submit" value="Submit" />
         </form>
       </div>
     );
   }
 }
 
-MessageForm.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-};
+// MessageForm.propTypes = {
+//   handleSubmit: PropTypes.func.isRequired,
+// };
 
 export default MessageForm;
