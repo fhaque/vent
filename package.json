@@ -51,6 +51,7 @@
     "googleapis": "^22.2.0",
     "jquery": "^3.2.1",
     "moment": "^2.19.1",
+    "rc-slider": "^8.3.2",
     "react-datepicker": "^0.56.0",
     "underscore": "^1.8.3",
     "whatwg-fetch": "^2.0.3"
