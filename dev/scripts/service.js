@@ -110,7 +110,20 @@ service.getMessages = function({limit= 99999, userMessagesOnly= false, minSentim
     throw `userMessagesOnly not boolean.`
   }
 
-  return messagesRef.once('value')
+  let dbQuery = messagesRef;
+
+  //Query for user messages only
+  if (userMessagesOnly) {
+    dbQuery = dbQuery.orderByChild('uid').equalTo(service.uid, 'uid');
+  }
+
+  dbQuery = dbQuery
+    .orderByChild('sentiment')
+    .startAt(minSentiment)
+    .endAt(maxSentiment)
+    .limitToFirst(limit);
+
+  return dbQuery.once('value')
     .then(snapshot => snapshot.val())
     .then(service.dbMessagesToMessagesArray);
 };
