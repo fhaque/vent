@@ -18,29 +18,53 @@ class FilterMenu extends React.Component {
     this.state = {
       minSentiment: -1,
       maxSentiment: 1,
-      dateObj: moment(),
+      startDate: moment().subtract(1, 'months'), //month in past,
+      endDate: moment(),
+      userMessagesOnly: false,
     }
 
     this.sentimentRange = [-1,1];
     this.sentimentStep = 0.2;
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleDateChange = this.handleDateChange.bind(this);
     this.handleRangeChange = this.handleRangeChange.bind(this);
+    this.handleChangeStart = this.handleChangeStart.bind(this);
+    this.handleChangeEnd = this.handleChangeEnd.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
+
+    const { minSentiment, maxSentiment, startDate, endDate, userMessagesOnly  } = this.state;
+
+    this.props.handleSubmit({
+      minSentiment,
+      maxSentiment,
+      startDate: startDate.valueOf(),
+      endDate: endDate.valueOf(),
+      userMessagesOnly
+    });
   }
 
-  handleDateChange(date) {
+  handleChange(e) {
+    const target = event.target;
+    const name = target.name;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
 
-    // const name = target.name;
-    // const value =  target.value;
+    this.setState({ [name]: value });
+  }
+
+  handleChangeStart(startDate) {
+    if ( startDate.isBefore(this.state.endDate) ) {
+      this.setState({ startDate });
+    }
     
-    console.log("On Filter Change:", date.constructor.name, date.valueOf() );
+  }
 
-    this.setState({ dateObj: date });
+  handleChangeEnd(endDate) {
+    if ( this.state.startDate.isBefore(endDate) ) {
+      this.setState({ endDate });
+    }
   }
 
   handleRangeChange(value) {
@@ -49,12 +73,15 @@ class FilterMenu extends React.Component {
   }
 
   render() {
-    const { minSentiment, maxSentiment, dateObj } = this.state;
+    const { minSentiment, maxSentiment, startDate, endDate, userMessagesOnly } = this.state;
 
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
-
+          <label>
+            <span>Only you messages</span>
+            <input type="checkbox" name="userMessagesOnly" value={userMessagesOnly} />
+          </label>
           <Range 
             dots 
             step={this.sentimentStep}
@@ -64,12 +91,14 @@ class FilterMenu extends React.Component {
             max={this.sentimentRange[1]} 
             onChange={this.handleRangeChange} 
           />
-          <DateRangePicker handleChange={this.handleDateChange} />
-          <DatePicker
-            todayButton={"Today"}
-            selected={dateObj}
-            onChange={this.handleDateChange}
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            handleChangeStart={this.handleChangeStart} 
+            handleChangeEnd={this.handleChangeEnd} 
           />
+
+          <input type="submit" value="Apply" />
         </form>
       </div>
     );

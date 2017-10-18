@@ -7,23 +7,31 @@ import moment from 'moment';
 class DateRangePicker extends React.Component {
   constructor() {
     super();
-    
-    this.state = {
-      minDateObj: moment(Date.now() - 30 * 24 * 60 * 60 * 1000), //month in past,
-      maxDateObj: moment(Date.now()),
-    }
   }
 
+
   render() {
-    const { handleChange } = this.props;
+    const { handleChangeStart, handleChangeEnd, startDate, endDate } = this.props;
 
     return (
       <div>
         <DatePicker
           customInput={<DatePickerDisplay />}
+          selected={startDate}
+          selectsStart
+          startDate={startDate}
+          endDate={endDate}
+          onChange={handleChangeStart}
+        />
+
+        <DatePicker
+          customInput={<DatePickerDisplay />}
+          selected={endDate}
+          selectsEnd
           todayButton={"Today"}
-          selected={moment()}
-          onChange={handleChange}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={handleChangeEnd}
         />
       </div>
     );

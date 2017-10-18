@@ -88,44 +88,68 @@ service.addMessage = async function(msg) {
 
 
 //GET
-service.getMessages = function({limit= 99999, userMessagesOnly= false, minSentiment= -1, maxSentiment= 1}={}) {
+service.getMessages = function({ limit= 99999, userMessagesOnly= false, minSentiment= -1, maxSentiment= 1, startDate, endDate }={}) {
 
+  /* argument validation */
   if (minSentiment >= maxSentiment) {
     throw `minSentiment, ${minSentiment}, greater or equal to maxSentiment, ${maxSentiment}.`;
   }
 
   if ( minSentiment > 1 || minSentiment < -1 ) {
-    throw `minSentiment not in (-1,1) range: ${minSentiment}`
+    throw `minSentiment not in (-1,1) range: ${minSentiment}`;
   }
 
   if ( maxSentiment > 1 || maxSentiment < -1 ) {
-    throw `maxSentiment not in (-1,1) range: ${maxSentiment}`
+    throw `maxSentiment not in (-1,1) range: ${maxSentiment}`;
   }
 
   if (limit < 1) {
-    throw `limit set below 1.`
+    throw `limit set below 1.`;
   }
 
   if (typeof(userMessagesOnly) !== 'boolean') {
-    throw `userMessagesOnly not boolean.`
+    throw `userMessagesOnly not boolean.`;
   }
+
+  /* construct the Query */
+  // Note: Firebase has limited querying ability. So, some filtering
+  // happens on the local browser.
 
   let dbQuery = messagesRef;
 
-  //Query for user messages only
-  if (userMessagesOnly) {
-    dbQuery = dbQuery.orderByChild('uid').equalTo(service.uid, 'uid');
-  }
-
-  dbQuery = dbQuery
+  //Query by date range first if date range given, if not, by sentiment
+  if(startDate && endDate) {
+    if (startDate <= endDate) {
+      dbQuery = dbQuery
+        .orderByChild('date')
+        .startAt(startDate)
+        .endAt(endDate);
+    } else {
+      throw `startDate greater than enDate.`;
+    }
+  } else {
+    dbQuery
     .orderByChild('sentiment')
     .startAt(minSentiment)
-    .endAt(maxSentiment)
-    .limitToFirst(limit);
+    .endAt(maxSentiment);
+  }
 
-  return dbQuery.once('value')
+  //Query for user messages only
+  if (userMessagesOnly) {
+    dbQuery = dbQuery.equalTo(service.uid, 'uid');
+  }
+
+  return dbQuery.limitToFirst(limit).once('value')
     .then(snapshot => snapshot.val())
-    .then(service.dbMessagesToMessagesArray);
+    .then(service.dbMessagesToMessagesArray)
+    .then( messages => {
+      if (startDate && endDate) {
+        return messages.filter( msg => (msg.date >= startDate) && (msg.date <= endDate) );
+      } else {
+        return messages.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment) );
+      }
+
+    });
 };
 
 service.dbMessagesToMessagesArray = function(dbMessages) {

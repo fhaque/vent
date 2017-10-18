@@ -17,6 +17,7 @@ class App extends React.Component {
 
         this.handleServiceInit = this.handleServiceInit.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleFilter = this.handleFilter.bind(this);
     }
 
     componentDidMount() {
@@ -39,13 +40,18 @@ class App extends React.Component {
             });
     }
 
+    handleFilter(filter) {
+        service.getMessages(filter)
+        .then( data => this.setState({ messages: data }) );
+    }
+
     render() {
         const { messages } = this.state;
         console.log("From render:", messages);
 
         return (
             <div>
-                <FilterMenu />
+                <FilterMenu handleSubmit={this.handleFilter} />
                 <ul>
                     {messages.map( (msg) => {
                         return(
