@@ -24,6 +24,7 @@ gulp.task('js', () => {
     browserify('./dev/scripts/app.js', {debug: true})
         .transform('babelify', {
             sourceMaps: true,
+            plugins: ['transform-class-properties', 'babel-plugin-react-css-modules'],
             presets: ['es2015','react']
         })
         .bundle()

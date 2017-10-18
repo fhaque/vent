@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import FilterMenu from './components/FilterMenu';
 import MessageForm from './components/MessageForm';
 import MessageFloat from './components/MessageFloat';
 
@@ -44,6 +45,7 @@ class App extends React.Component {
 
         return (
             <div>
+                <FilterMenu />
                 <ul>
                     {messages.map( (msg) => {
                         return(
