@@ -21,7 +21,6 @@ gulp.task('styles', () => {
 
 // Scripts task
 gulp.task('js', () => {
-    console.log('Doing JS task');
     browserify('./dev/scripts/app.js', {debug: true})
         .transform('babelify', {
             sourceMaps: true,

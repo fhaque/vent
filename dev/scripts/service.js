@@ -1,9 +1,13 @@
 import 'whatwg-fetch';
 // import 'googleapis';
+import firebase from './firebase';
 
 import {ajax} from 'jquery';
 
-const db =[];
+const messagesRef = firebase.database().ref('messages');
+const usersRef = firebase.database().ref('users');
+
+
 const GOOGLE_API_KEY = 'AIzaSyALAOVJ8EJrA2C9SxcX9rB8-xPoAPXCuzk';
 const GOOGLE_SENTIMENT_URL = `https://language.googleapis.com/v1/documents:analyzeSentiment`;
 const GOOGLE_API_LANGUAGE_URL = 'https://language.googleapis.com/$discovery/rest?version=v1beta1';
@@ -64,7 +68,7 @@ service.getSentiment = function(txt) {
 service.newMessage = function(txt) {
   return {
     msg: txt,
-    msgid: '' + Date.now(),
+    // msgid: '' + Date.now(),
     uid: '',
     date: Date.now(),
     sentiment: 0,
@@ -78,7 +82,7 @@ service.addMessage = async function(msg) {
   const sentimentData = await service.getSentiment(msg.msg);
   msg.sentiment = sentimentData.documentSentiment.score; 
 
-  db.push(msg);
+  await messagesRef.push(msg);
   return true;
 };
 
@@ -106,8 +110,23 @@ service.getMessages = function({limit= 99999, userMessagesOnly= false, minSentim
     throw `userMessagesOnly not boolean.`
   }
 
-  return Promise.resolve(db);
+  return messagesRef.once('value')
+    .then(snapshot => snapshot.val())
+    .then(service.dbMessagesToMessagesArray);
 };
+
+service.dbMessagesToMessagesArray = function(dbMessages) {
+  const messages = [];
+  for (const key in dbMessages) {
+    if ( dbMessages.hasOwnProperty(key) ) {
+      const msg = Object.assign({}, dbMessages[key]);
+      msg.msgid = key;
+      messages.push(msg);
+    }
+  }
+
+  return messages;
+}
 
 service.setCurrentUser = function(uid) {
   service.uid = uid;
