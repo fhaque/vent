@@ -59,7 +59,6 @@ class FilterMenu extends React.Component {
     const name = target.name;
     const value = target.type === 'checkbox' ? target.checked : target.value;
 
-    console.log(e, name, value);
     this.setState({ [name]: value });
   }
 

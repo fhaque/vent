@@ -18,12 +18,15 @@ class App extends React.Component {
             messages: [],
             averageSentiment: 0,
             user: null,
+            filter: {},
         }
 
         this.handleServiceInit = this.handleServiceInit.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
         this.setStateMessages = this.setStateMessages.bind(this);
+
+        this.handleServiceSubscription = this.handleServiceSubscription.bind(this);
 
         this.handleLogging = this.handleLogging.bind(this);
     }
@@ -32,8 +35,13 @@ class App extends React.Component {
         service.init({cb: this.handleServiceInit});
     }
 
-    async handleServiceInit() {
-        service.getMessages().then(this.setStateMessages);
+    handleServiceInit() {
+        service.subscribeToMessages({}, this.handleServiceSubscription);
+        // service.getMessages().then(this.setStateMessages);
+    }
+
+    handleServiceSubscription(messages) {
+        this.setStateMessages(messages);
     }
 
     handleLogging() {
@@ -50,7 +58,7 @@ class App extends React.Component {
                 .signOut()
                 .then(() => {
                     service.removeCurrentUser();
-                    this.setState({ user: null });
+                    this.setState({ user: null, filter: {} });
                     this.handleFilter({});
                 });
         }
@@ -60,20 +68,18 @@ class App extends React.Component {
 
         const msg = service.newMessage(txt);
         console.log(msg);
-        service.addMessage(msg)
-            .then(() => service.getMessages.call(null,this.state.filter))
-            .then( data => {
-                console.log(data);
-                this.setStateMessages(data);
-            });
+        service.addMessage(msg);
     }
 
     handleFilter(filter) {
         console.log("Filter is: ", filter);
         this.setState({ filter });
 
-        service.getMessages(filter)
-        .then(this.setStateMessages);
+        //unsubscribe to old service
+        service.unsubscribeToMessages();
+
+        //resubscribe with proper filter
+        service.subscribeToMessages(filter, this.handleServiceSubscription);
     }
 
     setStateMessages(messages) {
@@ -90,10 +96,6 @@ class App extends React.Component {
 
         let sentimentLightnessOne = 0.7 - (averageSentiment + 1) / 2 * 0.7;
         let sentimentLightnessTwo = 0.1 - (averageSentiment + 1) / 2 * 0.1;
-
-        console.log('sentimentligt', sentimentLightnessOne, sentimentLightnessTwo);
-
-        
 
 
         const style = {

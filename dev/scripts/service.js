@@ -75,25 +75,113 @@ service.newMessage = function(txt) {
   }
 };
 
+
+service.subscribeToMessages = function({ limit= 99999, userMessagesOnly= false, minSentiment= -1, maxSentiment= 1, startDate, endDate }={}, handle) {
+
+  /* argument validation */
+  if (minSentiment >= maxSentiment) {
+    throw `minSentiment, ${minSentiment}, greater or equal to maxSentiment, ${maxSentiment}.`;
+  }
+
+  if ( minSentiment > 1 || minSentiment < -1 ) {
+    throw `minSentiment not in (-1,1) range: ${minSentiment}`;
+  }
+
+  if ( maxSentiment > 1 || maxSentiment < -1 ) {
+    throw `maxSentiment not in (-1,1) range: ${maxSentiment}`;
+  }
+
+  if (limit < 1) {
+    throw `limit set below 1.`;
+  }
+
+  if (typeof(userMessagesOnly) !== 'boolean') {
+    throw `userMessagesOnly not boolean.`;
+  }
+
+  /* construct the Query */
+  // Note: Firebase has limited querying ability. So, some filtering
+  // happens on the local browser.
+
+  let dbQuery = messagesRef;
+
+  //Query for user messages only
+  // if (userMessagesOnly && service.uid) {
+  //   dbQuery = dbQuery.equalTo(service.uid, 'uid');
+  // }
+
+  //Query by date range first if date range given, if not, by sentiment
+  if(startDate && endDate) {
+    if (startDate <= endDate) {
+      dbQuery = dbQuery
+        .orderByChild('date')
+        .startAt(startDate)
+        .endAt(endDate);
+    } else {
+      throw `startDate greater than enDate.`;
+    }
+  } else {
+    dbQuery
+    .orderByChild('sentiment')
+    .startAt(minSentiment)
+    .endAt(maxSentiment);
+  }
+
+  dbQuery.limitToFirst(limit).on('value', snapshot => {
+    const dbMessages = snapshot.val();
+    const messages = service.dbMessagesToMessagesArray(dbMessages);
+
+    console.log("Services, pre-filter messages", messages);
+
+    let filtered = messages;
+    if (startDate && endDate) {
+      filtered = filtered.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment) );
+    }
+
+    if (userMessagesOnly && service.uid) {
+      filtered = filtered.filter(msg => msg.uid === service.uid);
+    }
+
+    if (handle) {
+      handle(filtered);
+    }
+
+  });
+
+}
+
+service.unsubscribeToMessages = function() {
+  messagesRef.off();
+}
+
 //POST
+// service.addMessage = function(msg) {
+//   msg.uid = service.uid || '';
+
+//   return service.getSentiment(msg.msg)
+//     .then( sentimentData =>  msg.sentiment = sentimentData.documentSentiment.score )
+//     .then( () => messagesRef.push(msg).key )
+//     .then( key => messagesRef.child(key).once('value') )
+//     .then( (snapshot) => {
+//       console.log( snapshot.val() )
+//       return snapshot.val();
+//     });
+
+//   // const sentimentData = await service.getSentiment(msg.msg);
+//   // msg.sentiment = sentimentData.documentSentiment.score; 
+
+//   // await messagesRef.push(msg);
+//   // return true;
+// };
+
 service.addMessage = function(msg) {
   msg.uid = service.uid || '';
 
   return service.getSentiment(msg.msg)
-    .then( sentimentData =>  msg.sentiment = sentimentData.documentSentiment.score )
-    .then( () => messagesRef.push(msg).key )
-    .then( key => messagesRef.child(key).once('value') )
-    .then( (snapshot) => {
-      console.log( snapshot.val() )
-      return snapshot.val();
-    });
-
-  // const sentimentData = await service.getSentiment(msg.msg);
-  // msg.sentiment = sentimentData.documentSentiment.score; 
-
-  // await messagesRef.push(msg);
-  // return true;
-};
+      .then( sentimentData =>  msg.sentiment = sentimentData.documentSentiment.score )
+      .then( () => messagesRef.push(msg) )
+      .then( () => true );
+}
 
 
 //GET

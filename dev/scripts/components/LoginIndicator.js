@@ -1,7 +1,6 @@
 import React from 'react';
 
 const LoginIndicator = (props) => {
-  console.log(props);
   const { user, handleLogging } = props;
 
   const { photoURL, displayName } = user || {photoURL: null, displayName: null};
