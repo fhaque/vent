@@ -45,6 +45,7 @@ class App extends React.Component {
     }
 
     handleFilter(filter) {
+        console.log("Filter is: ", filter);
         service.getMessages(filter)
         .then(this.setStateMessages);
     }

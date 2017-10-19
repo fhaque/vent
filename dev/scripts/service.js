@@ -142,9 +142,9 @@ service.getMessages = function({ limit= 99999, userMessagesOnly= false, minSenti
     .then(service.dbMessagesToMessagesArray)
     .then( messages => {
       if (startDate && endDate) {
-        return messages.filter( msg => (msg.date >= startDate) && (msg.date <= endDate) );
-      } else {
         return messages.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment) );
+      } else {
+        return messages;
       }
 
     });
@@ -165,6 +165,10 @@ service.dbMessagesToMessagesArray = function(dbMessages) {
 
 service.setCurrentUser = function(uid) {
   service.uid = uid;
+};
+
+service.removeCurrentUser = function() {
+  service.uid = '';
 };
 
 export default service;
