@@ -75,7 +75,7 @@ gulp.task('bs', () => {
 
 gulp.task('watch', function() {
     gulp.watch('./dev/scripts/**/*.js',['js']);
-    gulp.watch('./dev/**/*.scss',['styles']);
+    gulp.watch('./dev/styles/**/*.scss',['styles']);
     gulp.watch('./dev/assets/**/*', ['assets-compressed']);
     /* uncomment if you want uncompressed */
     // gulp.watch('dev/assets/**/*', ['assets-uncompressed']);

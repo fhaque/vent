@@ -14,7 +14,7 @@ class MessageForm extends React.Component {
   }
 
   handleSubmit(e) {
-    // e.preventDefault();
+    e.preventDefault();
 
     this.props.handleSubmit(this.state.msg);
   }

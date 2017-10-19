@@ -1,0 +1,53 @@
+.MessageFloat {
+}
+
+.MessageFloat__contentContainer {
+  display: inline-block;
+  position: relative;
+
+  // width: 30%;
+  // min-width: 450px;
+  // max-width: 450px;
+  padding: 25px 50px;
+  border-radius: 100px;
+
+
+  background-color: $cloudBaseColor;
+  background: linear-gradient(to bottom,  #fff 5%,#f1f1f1 100%);
+  box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1);
+
+  font-family: $messageFontFamily;
+  font-size: 3rem;
+
+  &:after, &:before {
+    position: absolute;
+
+    z-index: -1;
+
+    content: '';
+    background: $cloudBaseColor;
+  }
+
+  &:after {
+    border-radius: 100%;
+
+    width: 40%;
+    height: 90%;
+    left: 50%;
+    top: -30%;
+  }
+
+  &:before {
+    border-radius: 100%;
+    width: 50%;
+    height: 110%;
+    right: 40%;
+    top: -49%;
+  }
+
+  // & p {
+  //   white-space: nowrap;
+  //   overflow: hidden;
+  //   text-overflow: ellipsis;
+  // }
+}

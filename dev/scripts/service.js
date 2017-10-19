@@ -44,8 +44,6 @@ service.init = function({uid, cb} = {}) {
 }
 
 
-
-
 //Fetch from Google, Sentiment Analysis
 service.getSentiment = function(txt) {
   return service.gapi
