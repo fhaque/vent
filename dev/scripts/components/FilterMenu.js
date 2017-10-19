@@ -106,15 +106,18 @@ class FilterMenu extends React.Component {
           min={this.sentimentRange[0]} 
           max={this.sentimentRange[1]} 
           onChange={this.handleRangeChange}
+          className="FilterMenu__sentiment"
+          trackStyle={[{backgroundColor: '#ffd000'}]}
         />
         <DateRangePicker
           startDate={startDate}
           endDate={endDate}
           handleChangeStart={this.handleChangeStart} 
-          handleChangeEnd={this.handleChangeEnd} 
+          handleChangeEnd={this.handleChangeEnd}
+          className="FilterMenu__dateRange" 
         />
 
-        <input type="submit" value="Apply" />
+        <input type="submit" value="Apply" className="FilterMenu__submit" />
       </form>
     );
   }

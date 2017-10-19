@@ -14,7 +14,8 @@ class DatePickerDisplay extends React.Component {
 
   render() {
     return (
-      <button
+      <button 
+        className="DatePickerDisplay"
         onClick={this.handleClick}>
         {this.props.value}
       </button>

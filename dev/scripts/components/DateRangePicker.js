@@ -11,28 +11,33 @@ class DateRangePicker extends React.Component {
 
 
   render() {
-    const { handleChangeStart, handleChangeEnd, startDate, endDate } = this.props;
+    const { handleChangeStart, handleChangeEnd, startDate, endDate, className } = this.props;
 
     return (
-      <div>
-        <DatePicker
-          customInput={<DatePickerDisplay />}
-          selected={startDate}
-          selectsStart
-          startDate={startDate}
-          endDate={endDate}
-          onChange={handleChangeStart}
-        />
-
-        <DatePicker
-          customInput={<DatePickerDisplay />}
-          selected={endDate}
-          selectsEnd
-          todayButton={"Today"}
-          startDate={startDate}
-          endDate={endDate}
-          onChange={handleChangeEnd}
-        />
+      <div className={className}>
+        <label className={`${className}__datePickerContainer`}>
+          <span className={`${className}__labelText`}>Start Date:</span>
+          <DatePicker
+            customInput={<DatePickerDisplay />}
+            selected={startDate}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            onChange={handleChangeStart}
+          />
+        </label>
+        <label className={`${className}__datePickerContainer`}>
+          <span className={`${className}__labelText`}>End Date:</span>
+          <DatePicker
+            customInput={<DatePickerDisplay />}
+            selected={endDate}
+            selectsEnd
+            todayButton={"Today"}
+            startDate={startDate}
+            endDate={endDate}
+            onChange={handleChangeEnd}
+          />
+        </label>
       </div>
     );
   }
