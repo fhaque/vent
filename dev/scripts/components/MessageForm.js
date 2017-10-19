@@ -17,6 +17,7 @@ class MessageForm extends React.Component {
     e.preventDefault();
 
     this.props.handleSubmit(this.state.msg);
+    this.setState({ msg: ''});
   }
 
   handleChange(e) {
@@ -32,12 +33,17 @@ class MessageForm extends React.Component {
     const { msg } = this.state;
 
     return (
-      <div>
-        <form onSubmit={this.handleSubmit} >
-          <input type="text" name="msg" value={msg} onChange={this.handleChange}/>
-          <input type="submit" value="Submit" />
-        </form>
-      </div>
+      <form onSubmit={this.handleSubmit} className="MessageForm">
+        <input 
+          type="text" 
+          name="msg" 
+          value={msg} 
+          onChange={this.handleChange} 
+          className="MessageForm__msg"
+          placeholder="Write a Thought..."
+        />
+        <input type="submit" value="Submit" className="MessageForm__submit"/>
+      </form>
     );
   }
 }

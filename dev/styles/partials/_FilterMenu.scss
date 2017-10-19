@@ -1,0 +1,22 @@
+input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
+  visibility: hidden;
+
+  & + .FilterMenu__checkboxLabel > .FilterMenu__checkbox {
+
+    display: block;
+
+    width: 20px;
+    min-height: 20px;
+    background: transparent;
+    border: 4px solid $baseUIColor;
+    border-radius: 5px;
+
+  }
+
+  
+
+  &:checked + .FilterMenu__checkboxLabel > .FilterMenu__checkbox {
+    background-color: $baseUIColor;
+  }
+}
+

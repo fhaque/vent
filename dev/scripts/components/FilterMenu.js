@@ -30,6 +30,14 @@ class FilterMenu extends React.Component {
     this.handleRangeChange = this.handleRangeChange.bind(this);
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeEnd = this.handleChangeEnd.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(e) {
+    if (e.target.name === 'userMessagesOnlyLabel') {
+      this.setState({ userMessagesOnly: !this.state.userMessagesOnly });
+    }
   }
 
   handleSubmit(e) {
@@ -47,10 +55,11 @@ class FilterMenu extends React.Component {
   }
 
   handleChange(e) {
-    const target = event.target;
+    const target = e.target;
     const name = target.name;
     const value = target.type === 'checkbox' ? target.checked : target.value;
 
+    console.log(e, name, value);
     this.setState({ [name]: value });
   }
 
@@ -76,31 +85,37 @@ class FilterMenu extends React.Component {
     const { minSentiment, maxSentiment, startDate, endDate, userMessagesOnly } = this.state;
 
     return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            <span>Only you messages</span>
-            <input type="checkbox" name="userMessagesOnly" value={userMessagesOnly} />
-          </label>
-          <Range 
-            dots 
-            step={this.sentimentStep}
-            value={[minSentiment, maxSentiment]}
-            defaultValue={[minSentiment, maxSentiment]} 
-            min={this.sentimentRange[0]} 
-            max={this.sentimentRange[1]} 
-            onChange={this.handleRangeChange} 
-          />
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            handleChangeStart={this.handleChangeStart} 
-            handleChangeEnd={this.handleChangeEnd} 
-          />
+      <form onSubmit={this.handleSubmit} className="FilterMenu">
+        <input 
+          id="userMessagesOnlyCheckbox" 
+          type="checkbox" 
+          name="userMessagesOnly" 
+          className="FilterMenu__userMessagesOnlyCheckBox"
+          checked={userMessagesOnly}
+          onChange={this.handleChange}
+        />
+        <label htmlFor="userMessagesOnlyCheckbox" className="FilterMenu__label FilterMenu__checkboxLabel">
+          <span className="FilterMenu__checkbox"></span>
+          <span className="FilterMenu__labelText">Only your messages</span>
+        </label>
+        <Range 
+          dots 
+          step={this.sentimentStep}
+          value={[minSentiment, maxSentiment]}
+          defaultValue={[minSentiment, maxSentiment]} 
+          min={this.sentimentRange[0]} 
+          max={this.sentimentRange[1]} 
+          onChange={this.handleRangeChange}
+        />
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          handleChangeStart={this.handleChangeStart} 
+          handleChangeEnd={this.handleChangeEnd} 
+        />
 
-          <input type="submit" value="Apply" />
-        </form>
-      </div>
+        <input type="submit" value="Apply" />
+      </form>
     );
   }
 }
