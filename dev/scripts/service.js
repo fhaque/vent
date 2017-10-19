@@ -1,6 +1,6 @@
 import 'whatwg-fetch';
 // import 'googleapis';
-import firebase from './firebase';
+import firebase, { auth, provider } from './firebase';
 
 import {ajax} from 'jquery';
 
@@ -18,6 +18,8 @@ const GOOGLE_API_LANGUAGE_URL = 'https://language.googleapis.com/$discovery/rest
 const service = {
   uid: '',
   gapi: {},
+  auth: auth,
+  provider: provider,
 };
 
 service.init = function({uid, cb} = {}) {
@@ -74,14 +76,23 @@ service.newMessage = function(txt) {
 };
 
 //POST
-service.addMessage = async function(msg) {
-  msg.uid = service.uid;
+service.addMessage = function(msg) {
+  msg.uid = service.uid || '';
 
-  const sentimentData = await service.getSentiment(msg.msg);
-  msg.sentiment = sentimentData.documentSentiment.score; 
+  return service.getSentiment(msg.msg)
+    .then( sentimentData =>  msg.sentiment = sentimentData.documentSentiment.score )
+    .then( () => messagesRef.push(msg).key )
+    .then( key => messagesRef.child(key).once('value') )
+    .then( (snapshot) => {
+      console.log( snapshot.val() )
+      return snapshot.val();
+    });
 
-  await messagesRef.push(msg);
-  return true;
+  // const sentimentData = await service.getSentiment(msg.msg);
+  // msg.sentiment = sentimentData.documentSentiment.score; 
+
+  // await messagesRef.push(msg);
+  // return true;
 };
 
 
@@ -115,6 +126,11 @@ service.getMessages = function({ limit= 99999, userMessagesOnly= false, minSenti
 
   let dbQuery = messagesRef;
 
+  //Query for user messages only
+  // if (userMessagesOnly && service.uid) {
+  //   dbQuery = dbQuery.equalTo(service.uid, 'uid');
+  // }
+
   //Query by date range first if date range given, if not, by sentiment
   if(startDate && endDate) {
     if (startDate <= endDate) {
@@ -132,21 +148,22 @@ service.getMessages = function({ limit= 99999, userMessagesOnly= false, minSenti
     .endAt(maxSentiment);
   }
 
-  //Query for user messages only
-  if (userMessagesOnly) {
-    dbQuery = dbQuery.equalTo(service.uid, 'uid');
-  }
+  
 
   return dbQuery.limitToFirst(limit).once('value')
     .then(snapshot => snapshot.val())
     .then(service.dbMessagesToMessagesArray)
     .then( messages => {
+      let filtered = messages;
       if (startDate && endDate) {
-        return messages.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment) );
-      } else {
-        return messages;
+        filtered = filtered.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment) );
       }
 
+      if (userMessagesOnly && service.uid) {
+        filtered = filtered.filter(msg => msg.uid === service.uid);
+      }
+
+      return filtered;
     });
 };
 
@@ -168,7 +185,7 @@ service.setCurrentUser = function(uid) {
 };
 
 service.removeCurrentUser = function() {
-  service.uid = '';
+  service.uid = null;
 };
 
 export default service;

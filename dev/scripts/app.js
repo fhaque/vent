@@ -5,7 +5,8 @@ import FilterMenu from './components/FilterMenu';
 import MessageForm from './components/MessageForm';
 
 import MessageFloatsContainer from './components/MessageFloatsContainer';
-import MessageFloat from './components/MessageFloat';
+
+import LoginIndicator from './components/LoginIndicator.js';
 
 import service from './service';
 
@@ -16,12 +17,15 @@ class App extends React.Component {
         this.state = {
             messages: [],
             averageSentiment: 0,
+            user: null,
         }
 
         this.handleServiceInit = this.handleServiceInit.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
         this.setStateMessages = this.setStateMessages.bind(this);
+
+        this.handleLogging = this.handleLogging.bind(this);
     }
 
     componentDidMount() {
@@ -32,12 +36,32 @@ class App extends React.Component {
         service.getMessages().then(this.setStateMessages);
     }
 
+    handleLogging() {
+        if ( !this.state.user ) {
+            service.auth
+                .signInWithPopup(service.provider) 
+                .then((result) => {
+                    const user = result.user;
+                    service.setCurrentUser(user.uid);
+                    this.setState({ user });
+                });
+        } else {
+            service.auth
+                .signOut()
+                .then(() => {
+                    service.removeCurrentUser();
+                    this.setState({ user: null });
+                    this.handleFilter({});
+                });
+        }
+    }
+
     handleSubmit(txt) {
 
         const msg = service.newMessage(txt);
         console.log(msg);
         service.addMessage(msg)
-            .then(service.getMessages)
+            .then(() => service.getMessages.call(null,this.state.filter))
             .then( data => {
                 console.log(data);
                 this.setStateMessages(data);
@@ -46,6 +70,8 @@ class App extends React.Component {
 
     handleFilter(filter) {
         console.log("Filter is: ", filter);
+        this.setState({ filter });
+
         service.getMessages(filter)
         .then(this.setStateMessages);
     }
@@ -59,7 +85,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { messages, averageSentiment } = this.state;
+        const { messages, averageSentiment, user } = this.state;
         console.log("From render:", messages);
 
         let sentimentLightnessOne = 0.7 - (averageSentiment + 1) / 2 * 0.7;
@@ -86,6 +112,7 @@ class App extends React.Component {
                 <FilterMenu handleSubmit={this.handleFilter} />
                 <MessageFloatsContainer messages={messages} />
                 <MessageForm handleSubmit={this.handleSubmit} />
+                <LoginIndicator user={user} handleLogging={this.handleLogging} />
             </div>
         )
     }
