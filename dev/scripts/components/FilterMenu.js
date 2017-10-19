@@ -80,11 +80,44 @@ class FilterMenu extends React.Component {
     this.setState({ minSentiment, maxSentiment });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { filter } = nextProps;
+
+    if(!this.props.open) {
+      if (Object.keys(filter).length !== 0) {
+        this.setState({
+          minSentiment: filter.minSentiment,
+          maxSentiment: filter.maxSentiment,
+          startDate: moment(filter.startDate), //month in past,
+          endDate: moment(filter.endDate),
+          userMessagesOnly: filter.userMessagesOnly,
+        });
+      }
+    }
+  }
+
+  componentDidMount() {
+    console.log("Filter menu mounted");
+      const { filter } = this.props;
+      console.log(filter);
+      if (Object.keys(filter).length !== 0) {
+        this.setState({
+          minSentiment: filter.minSentiment,
+          maxSentiment: filter.maxSentiment,
+          startDate: moment(filter.startDate), //month in past,
+          endDate: moment(filter.endDate),
+          userMessagesOnly: filter.userMessagesOnly,
+        });
+      }
+  }
+
   render() {
     const { minSentiment, maxSentiment, startDate, endDate, userMessagesOnly } = this.state;
 
+    const { open } = this.props;
+
     return (
-      <form onSubmit={this.handleSubmit} className="FilterMenu">
+      <form onSubmit={this.handleSubmit} className={`FilterMenu ${open ? 'FilterMenu--open' : ''}`}>
         <input 
           id="userMessagesOnlyCheckbox" 
           type="checkbox" 

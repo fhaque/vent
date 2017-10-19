@@ -19,20 +19,28 @@ class App extends React.Component {
             averageSentiment: 0,
             user: null,
             filter: {},
+            filterMenuOpened: false,
         }
 
         this.handleServiceInit = this.handleServiceInit.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleFilter = this.handleFilter.bind(this);
-        this.setStateMessages = this.setStateMessages.bind(this);
-
         this.handleServiceSubscription = this.handleServiceSubscription.bind(this);
 
+        this.setStateMessages = this.setStateMessages.bind(this);
+
+        this.handleFilter = this.handleFilter.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.handleFilterMenuBtnClick = this.handleFilterMenuBtnClick.bind(this);
         this.handleLogging = this.handleLogging.bind(this);
     }
 
     componentDidMount() {
         service.init({cb: this.handleServiceInit});
+    }
+
+    handleFilterMenuBtnClick(e) {
+        e.preventDefault();
+        this.setState({ filterMenuOpened: !this.state.filterMenuOpened });
     }
 
     handleServiceInit() {
@@ -69,6 +77,12 @@ class App extends React.Component {
         const msg = service.newMessage(txt);
         console.log(msg);
         service.addMessage(msg);
+
+        // //unsubscribe to old service
+        // service.unsubscribeToMessages();
+        
+        // //resubscribe with proper filter
+        // service.subscribeToMessages(this.state.filter, this.handleServiceSubscription);
     }
 
     handleFilter(filter) {
@@ -91,7 +105,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { messages, averageSentiment, user } = this.state;
+        const { messages, averageSentiment, user, filterMenuOpened, filter } = this.state;
         console.log("From render:", messages);
 
         let sentimentLightnessOne = 0.7 - (averageSentiment + 1) / 2 * 0.7;
@@ -111,8 +125,9 @@ class App extends React.Component {
 
         return (
             <div style={style.container}>
-                <FilterMenu handleSubmit={this.handleFilter} />
+                <button className="FilterMenuBtn" onClick={this.handleFilterMenuBtnClick} />
                 <MessageFloatsContainer messages={messages} />
+                <FilterMenu open={filterMenuOpened} filter={filter} handleSubmit={this.handleFilter} />
                 <MessageForm handleSubmit={this.handleSubmit} />
                 <LoginIndicator user={user} handleLogging={this.handleLogging} />
             </div>

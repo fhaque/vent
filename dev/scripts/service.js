@@ -111,21 +111,21 @@ service.subscribeToMessages = function({ limit= 99999, userMessagesOnly= false, 
   // }
 
   //Query by date range first if date range given, if not, by sentiment
-  if(startDate && endDate) {
-    if (startDate <= endDate) {
-      dbQuery = dbQuery
-        .orderByChild('date')
-        .startAt(startDate)
-        .endAt(endDate);
-    } else {
-      throw `startDate greater than enDate.`;
-    }
-  } else {
-    dbQuery
-    .orderByChild('sentiment')
-    .startAt(minSentiment)
-    .endAt(maxSentiment);
-  }
+  // if(startDate && endDate) {
+  //   if (startDate <= endDate) {
+  //     dbQuery = dbQuery
+  //       .orderByChild('date')
+  //       .startAt(startDate)
+  //       .endAt(endDate);
+  //   } else {
+  //     throw `startDate greater than enDate.`;
+  //   }
+  // } else {
+  //   dbQuery
+  //   .orderByChild('sentiment')
+  //   .startAt(minSentiment)
+  //   .endAt(maxSentiment);
+  // }
 
   dbQuery.limitToFirst(limit).on('value', snapshot => {
     const dbMessages = snapshot.val();
@@ -134,12 +134,20 @@ service.subscribeToMessages = function({ limit= 99999, userMessagesOnly= false, 
     console.log("Services, pre-filter messages", messages);
 
     let filtered = messages;
+
     if (startDate && endDate) {
-      filtered = filtered.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment) );
+      filtered = filtered.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment) && (msg.date >= startDate) && (msg.date <= endDate + 24 * 60 * 60 * 1000 - 1) );
+    } else {
+      filtered = filtered.filter( msg => (msg.sentiment >= minSentiment) && (msg.sentiment <= maxSentiment));
     }
+    
 
     if (userMessagesOnly && service.uid) {
-      filtered = filtered.filter(msg => msg.uid === service.uid);
+      
+      filtered = filtered.filter(msg => {
+        console.log("filtering user msgs", (msg.uid + ""), (service.uid + ""));
+        return (msg.uid + "") === (service.uid + "");
+      });
     }
 
     if (handle) {
