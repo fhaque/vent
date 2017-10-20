@@ -100,35 +100,18 @@ input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
   }
 
   &:before {
-    // position: absolute;
     left: 0;
-    // top: 0;
     transform: translate(-50%,-110%);
 
-    // padding: 0;
-    // margin: 0;
-
     content: '☹️';
-    // font-size: 6rem;
 
-    // text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
   }
 
   &:after {
-    // position: absolute;
     right: 0;
-    // top: 0;
     transform: translate(50%, -110%);
 
-    // padding: 0;
-    // margin: 0;
-
     content: '😊';
-    // font-size: 6rem;
-
-    // text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-
-
   }
 }
 
@@ -178,7 +161,7 @@ input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
 
   @include respond-to("medium") {
-    font-size: 2rem;
+    font-size: 1.5rem;
     padding: 10px;
   }
 

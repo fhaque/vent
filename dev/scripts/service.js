@@ -1,8 +1,4 @@
-import 'whatwg-fetch';
-// import 'googleapis';
 import firebase, { auth, provider } from './firebase';
-
-import {ajax} from 'jquery';
 
 const messagesRef = firebase.database().ref('messages');
 const usersRef = firebase.database().ref('users');
@@ -68,7 +64,6 @@ service.getSentiment = function(txt) {
 service.newMessage = function(txt) {
   return {
     msg: txt,
-    // msgid: '' + Date.now(),
     uid: '',
     date: Date.now(),
     sentiment: 0,
@@ -105,28 +100,6 @@ service.subscribeToMessages = function({ limit= 99999, userMessagesOnly= false, 
 
   let dbQuery = messagesRef;
 
-  //Query for user messages only
-  // if (userMessagesOnly && service.uid) {
-  //   dbQuery = dbQuery.equalTo(service.uid, 'uid');
-  // }
-
-  //Query by date range first if date range given, if not, by sentiment
-  // if(startDate && endDate) {
-  //   if (startDate <= endDate) {
-  //     dbQuery = dbQuery
-  //       .orderByChild('date')
-  //       .startAt(startDate)
-  //       .endAt(endDate);
-  //   } else {
-  //     throw `startDate greater than enDate.`;
-  //   }
-  // } else {
-  //   dbQuery
-  //   .orderByChild('sentiment')
-  //   .startAt(minSentiment)
-  //   .endAt(maxSentiment);
-  // }
-
   dbQuery.limitToFirst(limit).on('value', snapshot => {
     const dbMessages = snapshot.val();
     const messages = service.dbMessagesToMessagesArray(dbMessages);
@@ -145,7 +118,6 @@ service.subscribeToMessages = function({ limit= 99999, userMessagesOnly= false, 
     if (userMessagesOnly && service.uid) {
       
       filtered = filtered.filter(msg => {
-        console.log("filtering user msgs", (msg.uid + ""), (service.uid + ""));
         return (msg.uid + "") === (service.uid + "");
       });
     }
@@ -162,25 +134,6 @@ service.unsubscribeToMessages = function() {
   messagesRef.off();
 }
 
-//POST
-// service.addMessage = function(msg) {
-//   msg.uid = service.uid || '';
-
-//   return service.getSentiment(msg.msg)
-//     .then( sentimentData =>  msg.sentiment = sentimentData.documentSentiment.score )
-//     .then( () => messagesRef.push(msg).key )
-//     .then( key => messagesRef.child(key).once('value') )
-//     .then( (snapshot) => {
-//       console.log( snapshot.val() )
-//       return snapshot.val();
-//     });
-
-//   // const sentimentData = await service.getSentiment(msg.msg);
-//   // msg.sentiment = sentimentData.documentSentiment.score; 
-
-//   // await messagesRef.push(msg);
-//   // return true;
-// };
 
 service.addMessage = function(msg) {
   msg.uid = service.uid || '';
@@ -221,11 +174,6 @@ service.getMessages = function({ limit= 99999, userMessagesOnly= false, minSenti
   // happens on the local browser.
 
   let dbQuery = messagesRef;
-
-  //Query for user messages only
-  // if (userMessagesOnly && service.uid) {
-  //   dbQuery = dbQuery.equalTo(service.uid, 'uid');
-  // }
 
   //Query by date range first if date range given, if not, by sentiment
   if(startDate && endDate) {

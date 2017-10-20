@@ -45,7 +45,6 @@ class App extends React.Component {
 
     handleServiceInit() {
         service.subscribeToMessages({}, this.handleServiceSubscription);
-        // service.getMessages().then(this.setStateMessages);
     }
 
     handleServiceSubscription(messages) {
@@ -75,18 +74,11 @@ class App extends React.Component {
     handleSubmit(txt) {
 
         const msg = service.newMessage(txt);
-        console.log(msg);
         service.addMessage(msg);
 
-        // //unsubscribe to old service
-        // service.unsubscribeToMessages();
-        
-        // //resubscribe with proper filter
-        // service.subscribeToMessages(this.state.filter, this.handleServiceSubscription);
     }
 
     handleFilter(filter) {
-        console.log("Filter is: ", filter);
         this.setState({ filter });
 
         //unsubscribe to old service
@@ -106,7 +98,6 @@ class App extends React.Component {
 
     render() {
         const { messages, averageSentiment, user, filterMenuOpened, filter } = this.state;
-        console.log("From render:", messages);
 
         let sentimentLightnessOne = 0.7 - (averageSentiment + 1) / 2 * 0.7;
         let sentimentLightnessTwo = 0.1 - (averageSentiment + 1) / 2 * 0.1;

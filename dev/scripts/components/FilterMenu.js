@@ -97,9 +97,8 @@ class FilterMenu extends React.Component {
   }
 
   componentDidMount() {
-    console.log("Filter menu mounted");
       const { filter } = this.props;
-      console.log(filter);
+      
       if (Object.keys(filter).length !== 0) {
         this.setState({
           minSentiment: filter.minSentiment,
