@@ -38,6 +38,13 @@
       color: $skyColor;
     }
   }
+
+  @include respond-to("medium") {
+    padding: 10px;
+    border: 2px solid $baseUIColor;
+
+    font-size: 1.5rem;
+  }
 }
 
 .MessageForm__submit {

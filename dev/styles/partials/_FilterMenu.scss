@@ -19,6 +19,12 @@
     display: flex;
   }
 
+  @include respond-to("medium") {
+    bottom: 45%;
+    transform: translate(-50%,50%);
+    min-height: 50vh;
+  }
+
 }
 
 
@@ -42,6 +48,13 @@ input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
     background: transparent;
     
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+
+    @include respond-to("medium") {
+      width: 1.5rem;
+      min-height: 1.5rem;
+      border: 2px solid $baseUIColor;
+      margin-right: 10px;
+    }
   }
 
   
@@ -56,6 +69,10 @@ input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
   font-size: 3rem;
 
   text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+
+  @include respond-to("medium") {
+    font-size: 1.5rem;
+  }
 }
 
 .FilterMenu__sentiment {
@@ -65,39 +82,62 @@ input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.1);
   }
 
-  &:before {
+  &:before, &:after {
     position: absolute;
-    left: 0;
     top: 0;
-    transform: translate(-50%,-110%);
 
     padding: 0;
     margin: 0;
 
-    content: '☹️';
     font-size: 6rem;
 
-    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    text-shadow: 0px 0px 5px rgba(131, 54, 54, 0.3);
+
+    @include respond-to("medium") {
+      font-size: 3rem;
+    }
+
+  }
+
+  &:before {
+    // position: absolute;
+    left: 0;
+    // top: 0;
+    transform: translate(-50%,-110%);
+
+    // padding: 0;
+    // margin: 0;
+
+    content: '☹️';
+    // font-size: 6rem;
+
+    // text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
   }
 
   &:after {
-    position: absolute;
+    // position: absolute;
     right: 0;
-    top: 0;
+    // top: 0;
     transform: translate(50%, -110%);
 
-    padding: 0;
-    margin: 0;
+    // padding: 0;
+    // margin: 0;
 
     content: '😊';
-    font-size: 6rem;
+    // font-size: 6rem;
 
-    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    // text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+
+
   }
 }
 
 .FilterMenu__dateRange {
   font-size: 3rem;
+
+  @include respond-to("medium") {
+    font-size: 1.5rem;
+  }
 }
 
 .FilterMenu__dateRange__datePickerContainer {
@@ -116,6 +156,10 @@ input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
   color: $baseUIColor;
 
   text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+
+  @include respond-to("medium") {
+    margin: 10px auto;
+  }
 }
 
 .FilterMenu__submit {
@@ -132,6 +176,11 @@ input[type="checkbox"].FilterMenu__userMessagesOnlyCheckBox {
   text-transform: uppercase;
   
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+
+  @include respond-to("medium") {
+    font-size: 2rem;
+    padding: 10px;
+  }
 
 }
 
