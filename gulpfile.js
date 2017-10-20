@@ -10,12 +10,17 @@ const sass = require('gulp-sass');
 const plumber = require('gulp-plumber');
 const concat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
+const autoprefixer = require('gulp-autoprefixer');
 
 // Styles task
 gulp.task('styles', () => {
     return gulp.src('./dev/styles/**/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(concat('style.css'))
+        .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade: false
+        }))
         .pipe(gulp.dest('./public/styles'))
 });
 

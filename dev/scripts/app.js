@@ -125,9 +125,9 @@ class App extends React.Component {
 
         return (
             <div style={style.container}>
-                <button className="FilterMenuBtn" onClick={this.handleFilterMenuBtnClick} />
+                <button className="FilterMenuBtn" onClick={this.handleFilterMenuBtnClick} >Filter</button>
                 <MessageFloatsContainer messages={messages} />
-                <FilterMenu open={filterMenuOpened} filter={filter} handleSubmit={this.handleFilter} />
+                <FilterMenu open={filterMenuOpened} filter={filter} userLoggedIn={(user) ? true : false} handleSubmit={this.handleFilter} />
                 <MessageForm handleSubmit={this.handleSubmit} />
                 <LoginIndicator user={user} handleLogging={this.handleLogging} />
             </div>

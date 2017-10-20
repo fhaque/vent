@@ -114,22 +114,26 @@ class FilterMenu extends React.Component {
   render() {
     const { minSentiment, maxSentiment, startDate, endDate, userMessagesOnly } = this.state;
 
-    const { open } = this.props;
+    const { open, userLoggedIn } = this.props;
 
     return (
       <form onSubmit={this.handleSubmit} className={`FilterMenu ${open ? 'FilterMenu--open' : ''}`}>
-        <input 
-          id="userMessagesOnlyCheckbox" 
-          type="checkbox" 
-          name="userMessagesOnly" 
-          className="FilterMenu__userMessagesOnlyCheckBox"
-          checked={userMessagesOnly}
-          onChange={this.handleChange}
-        />
-        <label htmlFor="userMessagesOnlyCheckbox" className="FilterMenu__label FilterMenu__checkboxLabel">
-          <span className="FilterMenu__checkbox"></span>
-          <span className="FilterMenu__labelText">Only your messages</span>
-        </label>
+        {userLoggedIn &&
+          <input 
+            id="userMessagesOnlyCheckbox" 
+            type="checkbox" 
+            name="userMessagesOnly" 
+            className="FilterMenu__userMessagesOnlyCheckBox"
+            checked={userMessagesOnly}
+            onChange={this.handleChange}
+          />
+        }
+        {userLoggedIn &&
+          <label htmlFor="userMessagesOnlyCheckbox" className="FilterMenu__label FilterMenu__checkboxLabel">
+            <span className="FilterMenu__checkbox"></span>
+            <span className="FilterMenu__labelText">Only your messages</span>
+          </label>
+        }
         <Range 
           dots 
           step={this.sentimentStep}
